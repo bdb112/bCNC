@@ -22,7 +22,7 @@ from bmath import (
 from bpath import Path, Segment
 from bstl import Binary_STL_Writer
 from dxf import DXF
-from svgcodex import SVGcode
+from svgcode import SVGcode
 from Helpers import to_zip
 
 IDPAT = re.compile(r".*\bid:\s*(.*?)\)")
@@ -2643,24 +2643,22 @@ class GCode:
         # FIXME: UI to set SVG samples_per_unit
         ppi = 72.0  # 96 pixels per inch.
         scale = self.SVGscale(ppi)
-        samples_per_unit = 10.0  # was 200? bdb
+        samples_per_unit = 10.0  # was 200 bdb - too fine
         for path in svgcode.get_gcode(scale,
                                       samples_per_unit,
                                       CNC.digits,
                                       ppi=ppi):
-            # bdb Fudge to do pen up/down by modifying Gcode -
-            # This should be in the svg code itself in the G0 handler
             print("============bdb=just called get_gcode=========")
             path_str = path["path"]
+            up_where_we_were = 'G0 Z1\n'
             fst = path_str.split('\n')[0]
             print('fst=', fst)
-            # set the feed rate on this using G1 instead
-            move_to_start = fst + ' Z0\n'
-            down_to_pen_down = fst.replace('G0','G1') + ' Z4.1 F2000\n'
-            new_path_str = move_to_start + down_to_pen_down + path_str   
+            move_to_start = fst + ' Z0\n'  #assume no Z value in fst
+            # set a "default" feed rate on pen down using G1 instead, same X, Y
+            down_to_pen_down_Z = fst.replace('G0','G1') + ' Z4.1 F2000\n'
             pen_up = "\nG0 Z1\n"
-            # bdb self.addBlockFromString(path["id"], new_path_str + pen_up)
-            self.addBlockFromString(path["id"], path_str)
+            new_path_str = up_where_we_were + move_to_start + down_to_pen_down_Z + path_str + pen_up  
+            self.addBlockFromString(path["id"], new_path_str)
         if empty:
             self.addBlockFromString("Footer", self.footer)
         return True
@@ -2924,6 +2922,7 @@ class GCode:
         comments=True,
         exitpoint=None,
         truncate=None,
+        dwell=None
     ):
         # Recursion for multiple paths
         if not isinstance(path, Path):
@@ -3050,6 +3049,8 @@ class GCode:
             # Retract to zsafe
             if retract:
                 block.append(f"g0 {self.fmt('z', CNC.vars['safe'], 7)}")
+                if dwell:
+                    block.append(f"g4 {self.fmt('p', float(dwell))}")
 
             # Rapid to beginning of the path
             block.append(f"g0 {self.fmt('x', x, 7)} {self.fmt('y', y, 7)}")
@@ -3061,6 +3062,8 @@ class GCode:
             else:
                 # without entry just rapid to Z
                 block.append(f"g0 {self.fmt('z', max(zh, ztab), 7)}")
+                if dwell:
+                    block.append(f"g4 {self.fmt('p', float(dwell))}")
 
             # Begin pass
             if comments:
@@ -3133,6 +3136,8 @@ class GCode:
                         f"{self.fmt('y', exitpoint[1])}"
                     )
                 block.append(CNC.zsafe())
+                if dwell:
+                    block.append(f"g4 {self.fmt('p', float(dwell))}")
 
         return block
 

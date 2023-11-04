@@ -108,19 +108,19 @@ class Controller(_GenericGRBL):
 
         for field in fields[1:]:
             word = SPLITPAT.split(field)
-            if word[0] == "MPos":
+            if word[0] == "WPos":  
                 try:
-                    CNC.vars["mx"] = float(word[1])
-                    CNC.vars["my"] = float(word[2])
-                    CNC.vars["mz"] = float(word[3])
-                    CNC.vars["wx"] = round(
-                        CNC.vars["mx"] - CNC.vars["wcox"], CNC.digits
+                    CNC.vars["wx"]= float(word[1])
+                    CNC.vars["wy"] = float(word[2])
+                    CNC.vars["wz"] = float(word[3])
+                    CNC.vars["mx"] = round(
+                        CNC.vars["wx"] + CNC.vars["wcox"], CNC.digits
                     )
-                    CNC.vars["wy"] = round(
-                        CNC.vars["my"] - CNC.vars["wcoy"], CNC.digits
+                    CNC.vars["my"] = round(
+                        CNC.vars["wy"] + CNC.vars["wcoy"], CNC.digits
                     )
-                    CNC.vars["wz"] = round(
-                        CNC.vars["mz"] - CNC.vars["wcoz"], CNC.digits
+                    CNC.vars["mz"] = round(
+                        CNC.vars["wz"] + CNC.vars["wcoz"], CNC.digits
                     )
                     if len(word) > 4:
                         CNC.vars["ma"] = float(word[4])
@@ -198,6 +198,7 @@ class Controller(_GenericGRBL):
                     break
             elif word[0] == "Pn":
                 try:
+                    print('==bdb hack Pn parser, word=', word, ", CNC.vars =", CNC.vars["pins"])
                     CNC.vars["pins"] = word[1]
                     if "S" in word[1]:
                         if (CNC.vars["state"] == "Idle"
@@ -210,6 +211,7 @@ class Controller(_GenericGRBL):
                                 "Ignoring machine stream request, "
                                 + "because of state: ",
                                 CNC.vars["state"],
+                                "RUNNING=", 
                                 self.master.running,
                             )
                 except (ValueError, IndexError):
@@ -225,7 +227,10 @@ class Controller(_GenericGRBL):
             self.master._gcount += 1
 
     def parseBracketSquare(self, line):
+        print('==bdb==PBSq==', end='')
+        #print('======================bdb=====ParseBracketSq ', line)
         word = SPLITPAT.split(line[1:-1])
+        print('bdb PaBrSq', line, word)
         if word[0] == "PRB":
             CNC.vars["prbx"] = float(word[1])
             CNC.vars["prby"] = float(word[2])
@@ -237,6 +242,10 @@ class Controller(_GenericGRBL):
             )
             self.master._probeUpdate = True
             CNC.vars[word[0]] = word[1:]
+            # print('bdb: probe updated',
+            #      [CNC.vars['prb'+v] for v in 'x,y,z'.split(',')],
+            #      [CNC.vars['wco'+v] for v in 'x,y,z'.split(',')])
+
         if word[0] == "G92":
             CNC.vars["G92X"] = float(word[1])
             CNC.vars["G92Y"] = float(word[2])

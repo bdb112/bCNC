@@ -22,7 +22,7 @@ from bmath import (
 from bpath import Path, Segment
 from bstl import Binary_STL_Writer
 from dxf import DXF
-from svgcode import SVGcode
+from svgcodex import SVGcode
 from Helpers import to_zip
 
 IDPAT = re.compile(r".*\bid:\s*(.*?)\)")
@@ -303,6 +303,7 @@ class Probe:
             xstep = -xstep
         lines.append(f"G0Z{self.zmax:.4f}")
         lines.append(f"G0X{self.xmin:.4f}Y{self.ymin:.4f}")
+        print('bdb hack - autolevel', lines)
         return lines
 
     # ----------------------------------------------------------------------
@@ -2624,7 +2625,7 @@ class GCode:
     # ----------------------------------------------------------------------
     # Get scaling factor for SVG files
     # ----------------------------------------------------------------------
-    def SVGscale(self, dpi=96.0):  # same as inkscape 0.9x (according to jscut)
+    def SVGscale(self, dpi=72.0):  # same as inkscape 0.9x (according to jscut)
         if CNC.inch:
             return 1.0 / dpi
         return 25.4 / dpi
@@ -2638,17 +2639,28 @@ class GCode:
         empty = len(self.blocks) == 0
         if empty:
             self.addBlockFromString("Header", self.header)
-
+            self.addBlockFromString("Global SVG Feed rate", "G1 F3000")
         # FIXME: UI to set SVG samples_per_unit
-        ppi = 96.0  # 96 pixels per inch.
+        ppi = 72.0  # 96 pixels per inch.
         scale = self.SVGscale(ppi)
-        samples_per_unit = 200.0
+        samples_per_unit = 10.0  # was 200? bdb
         for path in svgcode.get_gcode(scale,
                                       samples_per_unit,
                                       CNC.digits,
                                       ppi=ppi):
-            self.addBlockFromString(path["id"], path["path"])
-
+            # bdb Fudge to do pen up/down by modifying Gcode -
+            # This should be in the svg code itself in the G0 handler
+            print("============bdb=just called get_gcode=========")
+            path_str = path["path"]
+            fst = path_str.split('\n')[0]
+            print('fst=', fst)
+            # set the feed rate on this using G1 instead
+            move_to_start = fst + ' Z0\n'
+            down_to_pen_down = fst.replace('G0','G1') + ' Z4.1 F2000\n'
+            new_path_str = move_to_start + down_to_pen_down + path_str   
+            pen_up = "\nG0 Z1\n"
+            # bdb self.addBlockFromString(path["id"], new_path_str + pen_up)
+            self.addBlockFromString(path["id"], path_str)
         if empty:
             self.addBlockFromString("Footer", self.footer)
         return True
@@ -2912,7 +2924,6 @@ class GCode:
         comments=True,
         exitpoint=None,
         truncate=None,
-        dwell=None
     ):
         # Recursion for multiple paths
         if not isinstance(path, Path):
@@ -3039,8 +3050,6 @@ class GCode:
             # Retract to zsafe
             if retract:
                 block.append(f"g0 {self.fmt('z', CNC.vars['safe'], 7)}")
-                if dwell:
-                    block.append(f"g4 {self.fmt('p', float(dwell))}")
 
             # Rapid to beginning of the path
             block.append(f"g0 {self.fmt('x', x, 7)} {self.fmt('y', y, 7)}")
@@ -3052,8 +3061,6 @@ class GCode:
             else:
                 # without entry just rapid to Z
                 block.append(f"g0 {self.fmt('z', max(zh, ztab), 7)}")
-                if dwell:
-                    block.append(f"g4 {self.fmt('p', float(dwell))}")
 
             # Begin pass
             if comments:
@@ -3126,8 +3133,6 @@ class GCode:
                         f"{self.fmt('y', exitpoint[1])}"
                     )
                 block.append(CNC.zsafe())
-                if dwell:
-                    block.append(f"g4 {self.fmt('p', float(dwell))}")
 
         return block
 
@@ -3575,6 +3580,7 @@ class GCode:
     # Iterate over the items
     # ----------------------------------------------------------------------
     def iterate(self, items):
+        # print('bdb debug new commands items', items)
         for bid, lid in items:
             if lid is None:
                 block = self.blocks[bid]
@@ -4863,6 +4869,25 @@ class GCode:
         return changed
 
     # ----------------------------------------------------------------------
+    # Scale by dx,dy,dz added by bdb
+    # ----------------------------------------------------------------------
+
+    def scaleFunc(self, new, old, relative, sx, sy, sz):
+        if relative:  # do it regardles of relative 
+            pass
+        changed = False
+        if "X" in new:
+            changed = True
+            new["X"] *= sx
+        if "Y" in new:
+            changed = True
+            new["Y"] *= sy
+        if "Z" in new:
+            changed = True
+            new["Z"] *= sz
+        return changed
+
+    # ----------------------------------------------------------------------
     def orderLines(self, items, direction):
         if direction == "UP":
             self.orderUp(items)
@@ -4876,6 +4901,13 @@ class GCode:
     # ----------------------------------------------------------------------
     def moveLines(self, items, dx, dy, dz=0.0):
         return self.modify(items, self.moveFunc, None, dx, dy, dz)
+
+    # ----------------------------------------------------------------------
+    # Scale by dx,dy,dz - for just one item, the current origin is used to expand,
+    # so the origin should be set somewhere inside that set of  blocks
+    # ----------------------------------------------------------------------
+    def scaleLines(self, items, sx, sy, sz=1.0):
+        return self.modify(items, self.scaleFunc, None, sx, sy, sz)
 
     # ----------------------------------------------------------------------
     # Rotate position by c(osine), s(ine) of an angle around center (x0,y0)

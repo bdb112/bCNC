@@ -441,8 +441,8 @@ class MoveGroup(CNCRibbon.ButtonMenuGroup):
         )
         self.addWidget(b)
 
-    # ----------------------------------------------------------------------
-    def createMenu(self):
+    # ------------------"Move" Group pulldown---------------------------------
+    def createMenu(self):  
         menu = Menu(self, tearoff=0)
         for i, n, c in (
             ("tl", _("Top-Left"), "MOVE TL"),
@@ -621,6 +621,23 @@ class TransformGroup(CNCRibbon.ButtonGroup):
         )
         b.grid(row=row, column=col, padx=0, pady=0, sticky=NSEW)
         tkExtra.Balloon.set(b, _("Mirror vertically Y=-Y selected gcode"))
+        self.addWidget(b)
+
+        # ------------bdb new scale command ------
+        row += 1
+        b = Ribbon.LabelButton(
+            self.frame,
+            image=Utils.icons["expand"],
+            text=_("Scale"),
+            compound=LEFT,
+            anchor=W,
+            # bdb - see near line 1777 bmain.py
+            #command=lambda s=app: s.insertCommand("Write me! SCALE bdb", True),
+            command=lambda s=app: s.insertCommand("SCALE 1.33 1.33 1", True),
+            background=Ribbon._BACKGROUND,
+        )
+        b.grid(row=row, column=col, padx=0, pady=0, sticky=NSEW)
+        tkExtra.Balloon.set(b, _("Scale selected Gcode about workspace origin"))
         self.addWidget(b)
 
 

@@ -360,6 +360,7 @@ class _Base:
         # Load lists
         lists = []
         for var in self.variables:
+            # print(var, end=', ')  #bdb
             n, t, d, lp = var[:4]
             if t == "list":
                 lists.append(n)
@@ -369,12 +370,13 @@ class _Base:
                 for i in range(1000):
                     key = "_%s.%d" % (p, i)
                     value = Utils.getStr(self.name, key).strip()
+                    print("=bdb===list===========", key, value)
                     if value:
                         self.listdb[p].append(value)
                     else:
                         break
 
-        # Check if there is a current
+        # Check if there is a current, set to None if not
         try:
             self.current = int(Utils.config.get(self.name, "current"))
         except Exception:
@@ -394,8 +396,12 @@ class _Base:
             for var in self.variables:
                 n, t, d, lp = var[:4]
                 self.values[n] = self._get(n, t, d)
-        self.update()
 
+
+        self.update()
+        # print("\n\n bdb: Tools->loaded values", self.values)
+        # print(self.variables)
+        
     # ----------------------------------------------------------------------
     # Save to a configuration file
     # ----------------------------------------------------------------------
@@ -1222,6 +1228,7 @@ class Controller(_Base):
             lines.append(f"${n[5:]}={str(v)}")
             lines.append("%wait")
         lines.append("$$")
+        print('===bdb== Controller.execute =>', lines)
         app.run(lines=lines)
 
     # ----------------------------------------------------------------------
@@ -1350,6 +1357,7 @@ class Tools:
     # ----------------------------------------------------------------------
     def loadConfig(self):
         self.active.set(Utils.getStr(Utils.__prg__, "tool", "CNC"))
+        # print('bdb tools.values' self.tools.values())
         for tool in self.tools.values():
             tool.load()
 

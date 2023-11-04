@@ -20,7 +20,9 @@ class SVGcode:
 
     def path2gcode(self, path, samples_per_unit=100, d=4):
         gcode = []
-        gcode.append("G0 Z0")
+        gcode.append("G0 Z1")
+        # gcode.append("G1 Z1 F")
+
         if isinstance(path, str):
             path = Path(path)
 
@@ -33,9 +35,9 @@ class SVGcode:
 
             if isinstance(segment, Move):
                 print("==============  bdb svg mod===========")
-                gcode.append("G0 Z0")
+                gcode.append("G0 Z1")
                 gcode.append(f"G0 X{rv(segment.end.x)} Y{rv(-segment.end.y)}")
-                gcode.append("G0 Z4.5")
+                gcode.append("G0 Z5.5")
             elif isinstance(segment, (Line, Close)):
                 gcode.append(f"G1 X{rv(segment.end.x)} Y{rv(-segment.end.y)}")
             elif (isinstance(segment, Arc)
@@ -53,7 +55,7 @@ class SVGcode:
                 points = segment.npoint(subdiv_points)
                 gcode.extend(
                     [f"G1 X{rv(sp[0])} Y{rv(-sp[1])}" for sp in points])
-        gcode.append("G0 Z0")
+        gcode.append("G0 Z1")
 
         return "\n".join(gcode)
 

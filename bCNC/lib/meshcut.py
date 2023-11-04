@@ -12,6 +12,7 @@ try:
     USE_SCIPY = True
 except ImportError:
     USE_SCIPY = False
+    warning('scipy not loaded in mesh')
 
 # ---- Geometry datastructures
 

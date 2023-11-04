@@ -1,0 +1,4 @@
+#!/bin/bash
+cd /home/ric/gitbCNC/bCNC
+export PYTHONPATH=/home/ric/gitbCNC/bCNC:/home/ric/gitbCNC/bCNC/lib
+python -mbCNC

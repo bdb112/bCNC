@@ -1770,6 +1770,13 @@ class Application(Tk, Sender):
         elif rexx.abbrev("REVERSE", cmd, 3):
             self.executeOnSelection("REVERSE", True)
 
+        elif rexx.abbrev("SCALE", cmd, 3):  # bdb added scale
+            scale1 = float(line[1])
+            scale2 = float(line[2])
+            scale3 = float(line[3])
+            self.executeOnSelection("SCALE", False, scale1, scale2, scale3)
+
+
         # ROT*ATE [CCW|CW|FLIP|ang] [x0 [y0]]: rotate selected blocks
         # counter-clockwise(90) / clockwise(-90) / flip(180)
         # 90deg or by a specific angle and a pivot point
@@ -2017,6 +2024,8 @@ class Application(Tk, Sender):
             self.gcode.roundLines(items, *args)
         elif cmd == "ROTATE":
             self.gcode.rotateLines(items, *args)
+        elif cmd == "SCALE":   #bdb 
+            self.gcode.scaleLines(items, *args)
         elif cmd == "TABS":
             sel = self.gcode.createTabs(items, *args)
 
@@ -2277,7 +2286,7 @@ class Application(Tk, Sender):
         self.gcode.headerFooter()
         self.editor.fill()
         self.draw()
-        self.title(f"{Utils.__prg__} {__version__} {__platform_fingerprint__}")
+        self.title("bdbdev " + f"{Utils.__prg__} {__version__} {__platform_fingerprint__}")
 
     # -----------------------------------------------------------------------
     # load dialog
@@ -2393,7 +2402,7 @@ class Application(Tk, Sender):
             )
         else:
             self.setStatus(_("'{}' loaded").format(filename))
-        self.title(
+        self.title('==dev bdb' +
             f"{Utils.__prg__} {__version__}: {self.gcode.filename} "
             + f"{__platform_fingerprint__}"
         )
@@ -2538,6 +2547,7 @@ class Application(Tk, Sender):
     # Send enabled gcode file to the CNC machine
     # -----------------------------------------------------------------------
     def run(self, lines=None):
+        print('bdb hack bmain.run', lines)
         self.cleanAfter = True  # Clean when this operation stops
         print("Will clean after this operation")
 
@@ -2613,6 +2623,7 @@ class Application(Tk, Sender):
             # the buffer of the machine should be empty?
             self._runLines = len(self._paths) + 1  # plus the wait
         else:
+            print('bdb hack before "including one wait"')
             n = 1  # including one wait command
             for line in CNC.compile(lines):
                 if line is not None:
@@ -2626,6 +2637,7 @@ class Application(Tk, Sender):
         self.queue.put((WAIT,))  # wait at the end to become idle
 
         self.setStatus(_("Running..."))
+        print('bdb hack - after set status running')
         self.statusbar.setLimits(0, self._runLines)
         self.statusbar.configText(fill="White")
         self.statusbar.config(background="DarkGray")
@@ -2759,6 +2771,9 @@ class Application(Tk, Sender):
 
         # Update position if needed
         if self._posUpdate:
+            # print('bdb: probe updated',
+            #      [CNC.vars['prb'+v] for v in 'x,y,z'.split(',')],
+            #      [CNC.vars['wco'+v] for v in 'x,y,z'.split(',')])
             state = CNC.vars["state"]
             try:
                 CNC.vars["color"] = STATECOLOR[state]

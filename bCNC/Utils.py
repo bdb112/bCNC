@@ -69,8 +69,10 @@ __platform_fingerprint__ = "({} py{}.{}.{})".format(
     sys.version_info.minor,
     sys.version_info.micro,
 )
-__title__ = f"{__prg__} {__version__} {__platform_fingerprint__}"
-
+# try to make it clear which version is running - needs to be
+# done in othe code too unless there is a central constant
+__title__ = "dev" + f"{__prg__} {__version__} {__platform_fingerprint__}"
+print('====== bdb', __title__)
 __prg__ = "bCNC"
 prgpath = os.path.abspath(os.path.dirname(__file__))
 if getattr(sys, "frozen", False):

@@ -388,6 +388,12 @@ class SerialFrame(CNCRibbon.PageLabelFrame):
             return comports()
 
     def comportRefresh(self, dbg=False):
+        def highest_pts(): #bdb: order the existing pseudo terminals so that the
+            # two highest can be put in the list (for virtualserial debug use)
+            import os
+            pts_ports  = [f[2] for f in os.fwalk('/dev/pts')][0] 
+            return(['/dev/pts/'+ p for p in pts_ports if p[0] in '0123456789'])
+        
         # Detect devices
         hwgrep = []
         for i in self.comportsGet():
@@ -405,6 +411,13 @@ class SerialFrame(CNCRibbon.PageLabelFrame):
         devices += [""]
         devices += sorted(set(hwgrep))
         devices += [""]
+        ## bdb: allow for virtual ports created by virtualserialports
+        ##  They don't seem to be found by tools.comports
+        devices += ["/dev/pts/4"]
+        devices += ["/dev/pts/7"]
+        print('highest pts = ',highest_pts()[0:2])
+        for pt in highest_pts()[0:2]:
+            devices += [pt]
         # Pyserial raw spy currently broken in python3
         # TODO: search for python3 replacement for raw spy
         if sys.version_info[0] != 3:

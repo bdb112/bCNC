@@ -370,7 +370,8 @@ class _Base:
                 for i in range(1000):
                     key = "_%s.%d" % (p, i)
                     value = Utils.getStr(self.name, key).strip()
-                    print("=bdb===list===========", key, value)
+                    if CNC.developer:
+                        print("=loading=", key, value)
                     if value:
                         self.listdb[p].append(value)
                     else:

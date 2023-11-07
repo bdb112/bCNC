@@ -2641,18 +2641,21 @@ class GCode:
             self.addBlockFromString("Header", self.header)
             self.addBlockFromString("Global SVG Feed rate", "G1 F3000")
         # FIXME: UI to set SVG samples_per_unit
-        ppi = 72.0  # 96 pixels per inch.
+        ppi = 72.0  # 96 pixels per inch. #bdb
         scale = self.SVGscale(ppi)
-        samples_per_unit = 10.0  # was 200 bdb - too fine
+        samples_per_unit = 10.0  # was 200 bdb - too fine for most svgs
         for path in svgcode.get_gcode(scale,
                                       samples_per_unit,
                                       CNC.digits,
                                       ppi=ppi):
-            print("============bdb=just called get_gcode=========")
+            if CNC.developer:
+                print("============bdb=just called get_gcode=========")
+
             path_str = path["path"]
             up_where_we_were = 'G0 Z1\n'
             fst = path_str.split('\n')[0]
-            print('fst=', fst)
+            if CNC.developer:
+                print('svgcode: fst=', fst)
             move_to_start = fst + ' Z0\n'  #assume no Z value in fst
             # set a "default" feed rate on pen down using G1 instead, same X, Y
             down_to_pen_down_Z = fst.replace('G0','G1') + ' Z4.1 F2000\n'

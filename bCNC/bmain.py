@@ -238,7 +238,7 @@ class Application(Tk, Sender):
         # XXX FIXME do I need the self.canvas?
         self.canvas = self.canvasFrame.canvas
 
-        # fist create Pages
+        # first create Pages
         self.pages = {}
         for cls in (
             ControlPage,
@@ -2547,7 +2547,7 @@ class Application(Tk, Sender):
     # Send enabled gcode file to the CNC machine
     # -----------------------------------------------------------------------
     def run(self, lines=None):
-        print('bdb hack bmain.run', lines)
+        print('bdb debug bmain.run', lines)
         self.cleanAfter = True  # Clean when this operation stops
         print("Will clean after this operation")
 
@@ -2598,7 +2598,7 @@ class Application(Tk, Sender):
                 self.runEnded()
                 messagebox.showerror(
                     _("Empty gcode"),
-                    _("Not gcode file was loaded"),
+                    _("No gcode file was loaded"),
                     parent=self
                 )
                 return

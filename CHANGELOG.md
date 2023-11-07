@@ -1,6 +1,19 @@
-# bCNC changelog
+# bCNC /penny changelog
 
-There are too much commits, so i've created this brief overview of new features in bCNC.
+## Nov 7
+	- put my debug "print" statements under if CNC.developer: if clause
+	- fix a few typos, rename the sample user ini file to bCNC_user.ini
+	
+##Nov 1 2023  id_tag 2792
+ - Now bCNC expects WPOS coordinates in response to ?
+ - svg import now adds penup/pendown for plotter usage
+	(to come: option to do the above, and settings for up/down Z)
+	(feed and svg scale)
+  - single button to scale up between ISO A sizes (sqrt(2))	
+
+
+-------------- original bCNC log -----------
+10/2023 There are too much commits, so i've created this brief overview of new features in bCNC.
 
 ## Next
 - Breaking changes:

@@ -71,7 +71,7 @@ class SVGcode:
         svg = SVG.parse(self._filepath, reify=False,
                         ppi=ppi, transform=transform)
         for element in svg.elements():
-            print("---------bdb------", element)
+            #  print("---------bdb------", element)
             if isinstance(element, Shape):
                 if not isinstance(element, Path):
                     element = Path(element)

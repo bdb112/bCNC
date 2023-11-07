@@ -628,12 +628,12 @@ class TransformGroup(CNCRibbon.ButtonGroup):
         b = Ribbon.LabelButton(
             self.frame,
             image=Utils.icons["expand"],
-            text=_("Scale"),
+            text=_("Scale sqrt(2)"),
             compound=LEFT,
             anchor=W,
             # bdb - see near line 1777 bmain.py
             #command=lambda s=app: s.insertCommand("Write me! SCALE bdb", True),
-            command=lambda s=app: s.insertCommand("SCALE 1.33 1.33 1", True),
+            command=lambda s=app: s.insertCommand("SCALE 1.414 1.414 1", True),
             background=Ribbon._BACKGROUND,
         )
         b.grid(row=row, column=col, padx=0, pady=0, sticky=NSEW)

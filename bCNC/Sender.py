@@ -126,7 +126,8 @@ class Sender:
     def controllerLoad(self):
         # Find plugins in the controllers directory and load them
         for f in glob.glob(f"{Utils.prgpath}/controllers/*.py"):
-            print('bdb: loaded ', f)
+            if CNC.developer:
+                print(f'bdb: {f} was loaded ')
             name, ext = os.path.splitext(os.path.basename(f))
             if name[0] == "_":
                 continue
@@ -136,7 +137,9 @@ class Sender:
             except (ImportError, AttributeError):
                 typ, val, tb = sys.exc_info()
                 traceback.print_exception(typ, val, tb)
-        print("CNC.vars", ', '.join([x + '= ' + str(CNC.vars[x]) for x in list(CNC.vars)]))
+        if CNC.developer:
+            print("CNC.vars", ', '.join([x + '= ' + str(CNC.vars[x])
+                                         for x in list(CNC.vars)]))
                 
     # ----------------------------------------------------------------------
     def controllerList(self):

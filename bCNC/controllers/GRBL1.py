@@ -227,8 +227,10 @@ class Controller(_GenericGRBL):
             self.master._gcount += 1
 
     def parseBracketSquare(self, line):
-        print('==bdb==PBSq==', end='')
-        #print('======================bdb=====ParseBracketSq ', line)
+        print('==bdb==pBSq==', end='')
+        if CNC.developer:
+            print('===================bdb==pBSq===ParseBracketSq ', line)
+
         word = SPLITPAT.split(line[1:-1])
         print('bdb PaBrSq', line, word)
         if word[0] == "PRB":

@@ -660,6 +660,7 @@ class Orient:
 # Command operations on a CNC
 # =============================================================================
 class CNC:
+    cncname = "myCNC"
     inch = False
     lasercutter = False
     laseradaptive = False
@@ -709,7 +710,6 @@ class CNC:
         "_camwx": 0.0,
         "_camwy": 0.0,
         "G": [],
-        "TLO": 0.0,
         "motion": "G0",
         "WCS": "G54",
         "plane": "G17",
@@ -800,6 +800,11 @@ class CNC:
     @staticmethod
     def loadConfig(config):
         section = "CNC"
+        print("bdb-----staticmethod load config")
+        try:
+            CNC.cncname = config.get(section, "cncname")
+        except None: #Exception:
+            pass
         try:
             CNC.inch = bool(int(config.get(section, "units")))
         except Exception:

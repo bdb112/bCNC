@@ -138,7 +138,7 @@ class Sender:
                 typ, val, tb = sys.exc_info()
                 traceback.print_exception(typ, val, tb)
         if CNC.developer:
-            print("CNC.vars", ', '.join([x + '= ' + str(CNC.vars[x])
+            print("CNC.vars(sender)", ', '.join([x + '= ' + str(CNC.vars[x])
                                          for x in list(CNC.vars)]))
                 
     # ----------------------------------------------------------------------

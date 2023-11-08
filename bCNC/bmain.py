@@ -286,6 +286,12 @@ class Application(Tk, Sender):
                 parent=self,
             )
 
+        print("=======bdb==after user ini: ", end="")
+        print(f"CNC.cncname = {CNC.cncname}")
+        print("CNC.vars(bmain)", ', '.join([x + '= ' + str(CNC.vars[x])
+                                     for x in list(CNC.vars)]))
+                
+
         # remember the editor list widget
         self.dro = Page.frames["DRO"]
         self.abcdro = Page.frames["abcDRO"]

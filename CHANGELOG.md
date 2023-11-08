@@ -1,6 +1,10 @@
 # bCNC /penny changelog
 
-## Nov 7
+## xxxx  add a  variable cncname to [CNC] to identify CNC machine type,
+	prepare to rationalize the title in the top bar
+	
+	
+## Nov 7 ae1ef55
 	- put my debug "print" statements under if CNC.developer: if clause
 	- fix a few typos, rename the sample user ini file to bCNC_user.ini
 	

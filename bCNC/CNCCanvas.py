@@ -78,7 +78,8 @@ GANTRY_R = 4
 GANTRY_X = GANTRY_R * 2  # 10
 GANTRY_Y = GANTRY_R  # 5
 GANTRY_H = GANTRY_R * 5  # 20
-DRAW_TIME = 5  # Maximum draw time permitted
+DRAW_TIME = 5  # Maximum draw time permitted - usually overridden
+               #in the ini files, and adjustable on Editor ribbon
 
 INSERT_COLOR = "Blue"
 GANTRY_COLOR = "Red"
@@ -1911,7 +1912,7 @@ class CNCCanvas(Canvas):
             for i, block in enumerate(self.gcode.blocks):
                 start = True  # start location found
                 block.resetPath()
-
+                startBlock = time.time()
                 # Draw block
                 for j, line in enumerate(block):
                     n -= 1
@@ -1949,6 +1950,12 @@ class CNCCanvas(Canvas):
                             block.startPath(self.cnc.x, self.cnc.y, self.cnc.z)
                             start = False
                 block.endPath(self.cnc.x, self.cnc.y, self.cnc.z)
+                if CNC.developer:   #bdb
+                    del_t =  time.time() - startBlock
+                    total_t =  time.time() - startTime
+                    print(f"block {i}, {total_t:.3f}/{DRAW_TIME}, " +
+                          f"{1e6*del_t/len(block):.1f} usec/line")
+
         except AlarmException:
             self.status("Rendering takes TOO Long. Interrupted...")
 

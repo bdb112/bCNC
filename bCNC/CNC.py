@@ -2653,8 +2653,8 @@ class GCode:
                                       samples_per_unit,
                                       CNC.digits,
                                       ppi=ppi):
-            if CNC.developer:
-                print("============bdb=just called get_gcode=========")
+            # if CNC.developer:
+                # print("============bdb=just called get_gcode=========")
 
             path_str = path["path"]
             up_where_we_were = 'G0 Z1\n'

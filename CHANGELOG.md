@@ -1,6 +1,10 @@
 # bCNC /penny changelog
-
-## xxxx  add a  variable cncname to [CNC] to identify CNC machine type,
+## Nov 9 -- use a title template __title__ to enable consistent updates of the title
+	bar (showing version, loaded files, ini files)
+	--  timing code in graphics redraw.
+	
+	
+## Nov 8 629f  add a  variable cncname to [CNC] to identify CNC machine type,
 	prepare to rationalize the title in the top bar
 	
 	

@@ -69,11 +69,8 @@ __platform_fingerprint__ = "({} py{}.{}.{})".format(
     sys.version_info.minor,
     sys.version_info.micro,
 )
-# try to make it clear which version is running - needs to be
-# done in othe code too unless there is a central constant
-__title__ = "dev" + f"{__prg__} {__version__} {__platform_fingerprint__}"
-print('====== bdb', __title__)
-__prg__ = "bCNC"
+
+__prg__ = "bCNC"  # should be possible to get this from bmain or CNC instead
 prgpath = os.path.abspath(os.path.dirname(__file__))
 if getattr(sys, "frozen", False):
     # When being bundled by pyinstaller, paths are different
@@ -207,6 +204,7 @@ def delIcons():
 # Load configuration
 # -----------------------------------------------------------------------------
 def loadConfiguration(systemOnly=False):
+    print(f"bdb:systemOnly ={systemOnly}, iniUser={iniUser}, iniSystem={iniSystem}") 
     global config, _errorReport, language
     if systemOnly:
         config.read(iniSystem)

@@ -98,6 +98,9 @@ __platform_fingerprint__ = "".join([
     f"{sys.version_info.micro})"
 ])
 
+#  title template:  f1 is the current file, f2 is the current init
+__title__ = "{cncname}: " + f"{Utils.__prg__}{__platform_fingerprint__}{__version__}" + " [ {f1}] [{f2}]"
+
 _openserial = True  # override ini parameters
 _device = None
 _baud = None
@@ -152,7 +155,7 @@ class Application(Tk, Sender):
 
         photo = PhotoImage(file=f"{Utils.prgpath}/bCNC.png")
         self.iconphoto(True, photo)
-        self.title(f"{Utils.__prg__} {__version__} {__platform_fingerprint__}")
+        self.title(__title__.format(cncname=CNC.cncname, f1='<file not loaded>', f2=Utils.iniUser))
         self.widgets = []
 
         # Global variables
@@ -2292,7 +2295,7 @@ class Application(Tk, Sender):
         self.gcode.headerFooter()
         self.editor.fill()
         self.draw()
-        self.title("bdbdev " + f"{Utils.__prg__} {__version__} {__platform_fingerprint__}")
+        self.title(__title__.format(cncname=CNC.cncname, f1='filename?', f2=Utils.iniUser))
 
     # -----------------------------------------------------------------------
     # load dialog
@@ -2408,19 +2411,16 @@ class Application(Tk, Sender):
             )
         else:
             self.setStatus(_("'{}' loaded").format(filename))
-        self.title('==dev bdb' +
-            f"{Utils.__prg__} {__version__}: {self.gcode.filename} "
-            + f"{__platform_fingerprint__}"
-        )
+
+        self.title(__title__.format(cncname=CNC.cncname, f1=filename, f2=Utils.iniUser))
 
     # -----------------------------------------------------------------------
     def save(self, filename):
         Sender.save(self, filename)
         self.setStatus(_("'{}' saved").format(filename))
-        self.title(
-            f"{Utils.__prg__} {__version__}: {self.gcode.filename} "
-            + f"{__platform_fingerprint__}"
-        )
+        print(Utils.__prg__,"__title__", __title__)
+        self.title(__title__.format(f1=self.gcode.filename, f2=Utils.iniUser,
+                                    cncname=CNC.cncname))
 
     # -----------------------------------------------------------------------
     def saveAll(self, event=None):

@@ -14,9 +14,9 @@ with open("README.md") as fh:
 
 setup(
     name="bCNC",
-    version="0.9.15",
+    version="0.9.16",   # not sure how to relate to original Vlachoudis bCNC version
     license="GPLv2",
-    description="Swiss army knife for all your CNC/g-code needs",
+    description="- fork of Vasilis Vlachoudis bCNC 2023 git version, adapted for pen drawing by inexperienced users ",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=find_namespace_packages(),

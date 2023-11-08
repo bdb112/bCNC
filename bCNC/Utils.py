@@ -56,10 +56,10 @@ try:
 except Exception:
     serial = None
 
-__author__ = "Vasilis Vlachoudis"
-__email__ = "vvlachoudis@gmail.com"
-__version__ = "0.9.15"
-__date__ = "24 June 2022"
+__author__ = "Boyd Blackwell"
+__email__ = "boyd.blackwell@anu.edu.au"
+__version__ = "0.9.16"      # not sure how to relate to original bCNC version
+__date__ = "8 Nov 2023"
 __prg__ = "bCNC"
 
 

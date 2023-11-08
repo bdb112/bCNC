@@ -1,0 +1,24 @@
+V4
+
+
+V3  Utilsfor cncname  ini order, ini adits
+
+git stash save nov7_debug-ini-plotting_lines-title-developer-CNCname
+
+sqrt(2)
+
+4 Nov
+1/ previous changes to svg processing were moved to CNC.py as they are
+general for any type of set of paths to be drawn as curves, not just
+svg.
+
+2/ Try using a plugin to set svg values - at present the
+default feed, up and down positions
+and curve dissection number and scaling factor and DPI are hard coded
+
+Maybe find the DPI in the comments field of the svg rather than using
+96 - 
+
+3/ Put some debugging functions under a control parameter uch as
+debug_level,
+and move others to a stash or a fork for merging in when needed

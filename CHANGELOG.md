@@ -1,5 +1,11 @@
 # bCNC /penny changelog
-## Nov 9 -- use a title template __title__ to enable consistent updates of the title
+
+## Nov 9 ???? add bCNC_user_penny  (BACHIN?0 and bluey as templates for users of
+	these devices, bump version
+	
+	
+## Nov 9 e3c2
+	-- use a title template __title__ to enable consistent updates of the title
 	bar (showing version, loaded files, ini files)
 	--  timing code in graphics redraw.
 	
